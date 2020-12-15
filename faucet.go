@@ -72,6 +72,34 @@ var amount uint64 = 1000000000
 
 // giveGrins make it rain
 func (fe *FaucetEndpoint) giveGrins(w http.ResponseWriter, r *http.Request) {
+	// 0 Check that we have confirmed grins in our wallets
+	refreshed, walletInfo, err := fe.ownerAPI.RetrieveSummaryInfo(true, 1)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"error": err,
+		}).Error("Cannot communicate with wallet to get amount in wallet")
+		w.WriteHeader(http.StatusInternalServerError)
+		response := FaucetErrorResponse{Status: false, Error: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+	if !refreshed {
+		log.Error("Could not refresh outputs with node")
+		w.WriteHeader(http.StatusInternalServerError)
+		response := FaucetErrorResponse{Status: false, Error: "wallet communication error"}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+	if walletInfo.AmountCurrentlySpendable < core.Uint64(2*amount) {
+		log.WithFields(log.Fields{
+			"available": walletInfo.AmountCurrentlySpendable,
+		}).Error("Not enough grins")
+		response := FaucetErrorResponse{Status: false, Error: "Not enough grins, try again later"}
+		json.NewEncoder(w).Encode(response)
+		return
+
+	}
+
 	// 1. Read the body, limited to maximum size
 	bodyReader := bufio.NewReader(r.Body)
 	tBuffer := make([]byte, 2000)
