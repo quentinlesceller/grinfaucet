@@ -159,7 +159,7 @@ func (fe *FaucetEndpoint) giveGrins(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.WithFields(log.Fields{
 			"error": err,
-		}).Fatal("Cannot init send tx")
+		}).Error("Cannot init send tx")
 		w.WriteHeader(http.StatusBadRequest)
 		response := FaucetErrorResponse{Status: false, Error: err.Error()}
 		json.NewEncoder(w).Encode(response)
@@ -171,7 +171,7 @@ func (fe *FaucetEndpoint) giveGrins(w http.ResponseWriter, r *http.Request) {
 	if err := fe.ownerAPI.PostTx(*slate, true); err != nil {
 		log.WithFields(log.Fields{
 			"error": err,
-		}).Fatal("Cannot post transaction")
+		}).Error("Cannot post transaction")
 		w.WriteHeader(http.StatusBadRequest)
 		response := FaucetErrorResponse{Status: false, Error: err.Error()}
 		json.NewEncoder(w).Encode(response)
