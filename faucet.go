@@ -21,7 +21,7 @@ type FaucetEndpoint struct {
 // StartHandler starts the Pool API handler
 func (fe *FaucetEndpoint) StartHandler(router *mux.Router) {
 	// Initialize and open wallet
-	url := "http://127.0.0.1:3420/v3/owner"
+	url := "http://127.0.0.1:13420/v3/owner"
 	fe.ownerAPI = client.NewSecureOwnerAPI(url)
 	if err := fe.ownerAPI.Init(); err != nil {
 		log.WithFields(log.Fields{
