@@ -14,7 +14,7 @@ func main() {
 	InitBasicLogger()
 
 	// address to listen to
-	addr := "127.0.0.1:4444"
+	addr := "127.0.0.1:8081"
 
 	// Prepare API
 	// Add CORS
