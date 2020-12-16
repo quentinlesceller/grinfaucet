@@ -9,6 +9,7 @@ import (
 	"github.com/blockcypher/libgrin/v4/client"
 	"github.com/blockcypher/libgrin/v4/core"
 	"github.com/blockcypher/libgrin/v4/libwallet"
+	"github.com/blockcypher/libgrin/v4/libwallet/slateversions"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
@@ -162,6 +163,14 @@ func (fe *FaucetEndpoint) giveGrins(w http.ResponseWriter, r *http.Request) {
 		}).Error("Cannot init send tx")
 		w.WriteHeader(http.StatusBadRequest)
 		response := FaucetErrorResponse{Status: false, Error: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if slate.Sta != slateversions.Standard3SlateState || slate == nil {
+		log.Error("Slate not received")
+		w.WriteHeader(http.StatusBadRequest)
+		response := FaucetErrorResponse{Status: false, Error: "Wallet unreachable: please be sure that your wallet is listening"}
 		json.NewEncoder(w).Encode(response)
 		return
 	}
