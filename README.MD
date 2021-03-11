@@ -1,1 +1,1 @@
-Basic Grin Faucet coded in 30 minutes
+Basic Grin Faucet
